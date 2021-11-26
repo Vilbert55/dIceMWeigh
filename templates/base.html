@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ru">
+
+<head>
+  {% block head %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="address=no">
+    
+    <title>МОРЕМАНИЯ</title>
+    
+    <!-- Стили -->
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-grid.css">
+    <link rel="stylesheet" href="/static/jquery/css/jquery.fancybox.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- Стили -->
+    
+    
+    <!-- Favicon -->
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="theme-color" content="#ffffff">
+    <!-- Favicon -->
+    
+    <!-- Скрипты -->
+    <script src="/static/jquery/js/jquery-3.5.1.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.js"></script>
+    <script src="/static/jquery/js/jquery.fancybox.min.js"></script>
+    <script src="/static/js/template.js"></script>
+    <script src="/static/js/utils.js"></script>
+    <script src="/static/js/queries.js"></script>
+    <script src="/static/js/popper.js"></script>
+    <!-- Скрипты -->
+  {% endblock %}
+  
+  <script>
+      {% block initjs %}
+      {% endblock %}
+  </script>
+
+</head>
+<div class="container-fluid fill">
+  <!-- Content here -->
+    {% block content %}
+    {% endblock %}
+                    <div style="display: none;" class="pop pop_big" id="pop_warning">
+                        <div class="text h1" id='text-warning'></div>
+                    </div>
+</div>
+<body>
+
+</body>
+
+</html>

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="/static/css/kbd.css">
+    <script src="https://cdn.anychart.com/js/latest/anychart-bundle.min.js"></script>
+    <script src="/static/js/queries.js"></script>
+    <script src="/static/js/template.js"></script>
+    <script src="/static/tmpl/dashboard.js"></script>
+{% endblock %}
+
+{% block content %}
+      <nav class="col-12 navbar bar">
+        <div class="navbar-toggler" id="head">ПРОИЗВОДСТВО "СК СЕРВИС"</div>
+      </nav>
+
+  <div class="container-fluid max">
+    <div class="row fill">
+      <div class="col-6 g0 fill" style="text-align: center;">
+        <div class="row graf_container" id="graf_weigh1"></div>
+        <div class="row graf_container" id="graf_weigh2"></div>
+      </div>
+
+      <div class="col-6 g1">
+        <div class="row dashboard_cards">
+          <div class="col-6 dashboard_card" id="card_weigh1">
+          </div>
+          <div class="col-6 dashboard_card" id="card_weigh2">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+

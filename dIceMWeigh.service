@@ -1,0 +1,13 @@
+[Unit]
+Description=dIceMWeigh
+After=multi-user.target
+
+[Service]
+# Установить нужную директорию проекта
+WorkingDirectory=/srv/dIceMWeigh
+Type=idle
+ExecStart=/usr/bin/bash /srv/dIceMWeigh/start.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

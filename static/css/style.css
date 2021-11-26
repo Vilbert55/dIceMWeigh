@@ -1,0 +1,164 @@
+html, body {
+    height: 100%;
+    margin: 0px;
+}
+
+.fill {
+    height: 100%;
+    min-height: 100%;
+    margin:0px;
+    padding:0px;
+}
+.max { 
+    height: calc(100% - 50px);
+    margin:0px;
+    padding:0px;
+}
+
+.bar {
+    color:white;
+    background: #6C84A0;
+}
+
+.btn-wide {
+  width: 100%;
+  padding: 0;
+}
+
+.pop {
+  overflow: visible !important;
+  background: #fff !important;
+  display: none;
+  cursor: auto;
+  width: 100%;
+  text-align: center !important;
+  border-radius: 5px;
+  -webkit-transform: scale(0.8);
+  -ms-transform: scale(0.8);
+      transform: scale(0.8);
+  -webkit-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
+}
+.pop_right {
+    right:-35%;
+} 
+.pop_top {
+  top: -30%;
+}
+.pop_small {
+  max-width: 29.29688vw !important;
+}
+.pop_big {
+  max-width: 49.29688vw !important;
+}
+
+.pop_small .h1,
+.pop_small .h3,
+.pop_small .h4,
+.pop .h3,
+.pop .h4 {
+  margin-bottom: 2.5vh;
+  padding-top: 1vh;
+  text-transform: uppercase;
+}
+
+.btng {
+  height: 7.8vh;
+  line-height: 7.8vh;
+  display: inline-block;
+  vertical-align: middle;
+  text-align: center;
+  /* white-space: nowrap; */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  color: #333333;
+  background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#f1f1f2));
+  background: -o-linear-gradient(top, #ffffff 0%, #f1f1f2 100%);
+  background: linear-gradient(to bottom, #ffffff 0%, #f1f1f2 100%);
+  border: 0;
+  padding: 0 2.92969vw;
+  -webkit-box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.25);
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.25);
+  border-radius: 5px;
+}
+.calculator .btn {
+  margin-bottom: 1.04167vh;
+  padding: 0;
+}
+
+.calculator .btn.height_2 {
+  height: 16.66667vh;
+}
+
+.calculator .btn.height_4 {
+  height: 34.32vh;
+}
+
+.g0 {
+    background:#e0e0e0;
+}
+.g1 {
+    background:#d0d0d0;
+}
+.dashboard_cards {
+  height: 49%;
+  min-height: 49%;
+  margin:0;
+  padding:0;
+}
+.dashboard_card {
+  display: grid;
+  grid-template-areas: "a";
+  background-color: white;
+  border-radius: 8px;
+  width: 48%;
+  margin: 1%;
+}
+.graf_container {
+  margin: 1% 1%;
+  background-color: white;
+  height: 48%;
+}
+.graf_col{
+  width: 5%;
+  display: inline-block;
+}
+.dsh_card_item {
+  position: relative;
+  grid-area: a;
+  margin: 1%;
+  height: 5%;
+  line-height: 5%;
+  font-size: 150%;
+}
+.dsh_card_item_big {
+  position: relative;
+  justify-self: center;
+  grid-area: a;
+  margin: 0.5%;
+  height: 10%;
+  line-height: 10%;
+  font-size: 200%;
+  font-weight: 700;
+}
+.dsh_card_item_status {
+  position: relative;
+  justify-self: center;
+  grid-area: a;
+  margin: 0.5%;
+  height: 10%;
+  line-height: 10%;
+  border-radius: 10px;
+  width: 50%;
+}
+.text_status{
+  display: block;
+  text-align: center;
+  top: 50%;
+  position: relative;
+  color: white;
+  font-weight: 600;
+}

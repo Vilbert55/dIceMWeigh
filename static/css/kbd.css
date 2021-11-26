@@ -1,0 +1,68 @@
+.keyboard {
+    position: relative;
+    width: 85vw;
+    left: 50%;
+    margin-top: 5vh;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    /* display: none; */
+}
+
+.keyboard:before {
+    content: '';
+    background: #fff;
+    position: relative;
+    left: -1.5vw;
+    top: -2vh;
+    width: calc(100% + 3vw);
+    height: calc(100% + 4vh);
+    border-radius: 5px;
+}
+
+.keyboard .row {
+    position: relative;
+    margin: 0 -0.28828vw;
+    z-index: 10;
+}
+
+.keyboard .row>div {
+    margin-bottom: 0.45104vh;
+    padding: 0 0.28828vw;
+}
+
+.keyboard .btn {
+    position: relative;
+    min-width: 1px;
+    padding: 0 1.98828vw;
+    width: 100%;
+    height: 5.20833vh;
+    line-height: 5.20833vh;
+    background:#f0f0f0;
+}
+
+.icon-language {
+    background: url(../img/icons/language.svg) no-repeat 50% 50%;
+    background-size: contain;
+    height: 50%;
+    width: 50%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+}
+
+.keyboard.lang-ru .en {
+    display: none;
+}
+
+.keyboard.lang-en .ru {
+    display: none;
+}
+
+.keyboard.uppercase .btn-letter {
+    text-transform: uppercase;
+}
+
+
+
