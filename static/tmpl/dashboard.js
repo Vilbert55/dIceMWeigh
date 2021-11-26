@@ -20,7 +20,8 @@ TEMPLATE_CARD = `
 `;
 
 function drow_graf(container_id, title, data_graf) {
-    console.log("drow_graf container_id, title, data_graf", container_id, title, data_graf);
+    
+    // пример 
     // data_graf = [
     //     ["9", 2],
     //     ["10", 7],
@@ -88,7 +89,6 @@ function render(data){
         var max_cnt = 0;
         for(i in prods_by_hours){
             var cur_cnt = (prods_by_hours[i]["prods_list"]).length;
-            console.log("prods_by_hours[i]['prods_list']", prods_by_hours[i]["prods_list"]);
             if (cur_cnt>max_cnt){
                 max_cnt = cur_cnt
             }

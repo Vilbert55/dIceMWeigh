@@ -9,7 +9,7 @@ routes = web.RouteTableDef()
 async def test(request):
     return web.Response(text="it's working!")
 
-@routes.get('/')
+@routes.get('/dashboard/')
 async def main(request):
     return tresponse(request,"dashboard.html",{"val":"tut value"})
 
