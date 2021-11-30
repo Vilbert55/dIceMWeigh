@@ -88,7 +88,10 @@ class DB:
     async def dashboard_get_values(self):
         data = {"weigh1":{},"weigh2":{}}
         for fs in data:
-            code, json = fsproxy(fs, "/api/v1/report_head","get")
+            try:
+                code, json = fsproxy(fs, "/api/v1/report_head","get")
+            except:
+                code, json = 500, {}
             if code != 200:
                 data[fs]["status"] = "not_connect"
             else:
