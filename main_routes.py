@@ -29,4 +29,4 @@ async def put_set(request):
 @routes.get(url_api('/dashboard_get_values'))
 async def dashboard_get_values(request):
     response = await request.app['db'].dashboard_get_values()
-    return jmresponse(response, 200)
+    return jresponse(response, 200)

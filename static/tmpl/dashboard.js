@@ -9,11 +9,12 @@ TEMPLATE_CARD_DEFAULT = `
 <div id="status_{fs}" class="dsh_card_item_status" style="top: 86%; background-color: red;"><span id="status_text_{fs}"class="text_status">Нет связи</span></div>
 `;
 TEMPLATE_CARD = `
+<div class="dsh_card_item_dttm" style="top: 1%">Данные от: <span>{dttm_data}</span></div>
 <div class="dsh_card_item" style="top: 8%">Брутто: <span>{weight}</span></div>
 <div class="dsh_card_item" style="top: 16%">Брак: <span style="color: {procent_brak_color};">{procent_brak}%</span></div>
 <div class="dsh_card_item" style="top: 24%">Перевес: <span style="color: {procent_pereves_color};">{procent_pereves}%</span></div>
-<div class="dsh_card_item" style="top: 40%">Коробок: <span>{count_packages}</span></div>
-<div class="dsh_card_item" style="top: 48%">Штук: <span>{total_fact}</span></div>
+<div class="dsh_card_item" style="top: 40%">Штук: <span>{count_packages_v2}</span></div>
+<div class="dsh_card_item" style="top: 48%">Коробок: <span>{total_fact}</span></div>
 <div class="dsh_card_item" style="top: 56%">План: <span style="color: {procent_plan_color}">{procent_plan}%</span></div>
 <div class="dsh_card_item_big" style="top: 76%;">{fs_name}</div>
 <div id="status_{fs}" class="dsh_card_item_status" style="top: 86%; background-color: {fs_status_color};"><span id="status_text_{fs}"class="text_status">{status_text}</span></div>
@@ -21,7 +22,7 @@ TEMPLATE_CARD = `
 
 function drow_graf(container_id, title, data_graf) {
     
-    // пример 
+    // пример  [надпись под столбцом, значение], цвет столбца
     // data_graf = [
     //     ["9", 2],
     //     ["10", 7],
@@ -53,14 +54,20 @@ function drow_graf(container_id, title, data_graf) {
 function render(data){
     console.log(data);
     for(fs in data){
-        if(data[fs]["status"]=="not_connect"){
+        if(data[fs]["status"]=="no_data" || data[fs]["status"]=="data_backup"){
             $("#status_" + fs).css('background-color', 'red');
             $("#status_text" + fs).html('нет связи')
+        }
+        if(data[fs]["status"]=="no_data"){
             continue
         }
         if(data[fs]["status"]=="inwork"){
             data[fs]["status_text"] = "Работает";
             data[fs]["fs_status_color"] = "green";
+        }
+        if(data[fs]["status"]=="data_backup"){
+            data[fs]["status_text"] = "Нет связи";
+            data[fs]["fs_status_color"] = "red";
         }
         if(data[fs]["procent_brak"] > 6){
             data[fs]["procent_brak_color"] = "red";

@@ -56,9 +56,6 @@ class DB:
         self.db = setup_db()
         print(self.db)
         self.sets = {}
-        self.prods = []
-        self.prods_head = []
-        self.reports_head = []
 
     async def inc_counters(self,field):
         # Автоинкремент
@@ -72,17 +69,12 @@ class DB:
         # Получить все настройки
         self.sets = {}
         async for document in self.db.sets.find():
-            self.sets[document['id']] = document['value'] 
+            self.sets[document['id']] = document['value']
         return self.sets
     
     async def put_set(self,item):
         # Записать настройку item {"id":id,"value":value}
         result =  await self.db.sets.replace_one({"id":item.get("id")}, item, upsert=True)
-        if 'cur_good' == item.get('id'):
-            # Записываем текущий товар в текущее взвешивание
-            productid = item.get('value')
-            good = await self._get_good({"id":productid})
-            result = await self.upd_prods_head({'productid':productid,'article':good['vendor_code']})
         return result
 
     async def dashboard_get_values(self):
@@ -93,8 +85,18 @@ class DB:
             except:
                 code, json = 500, {}
             if code != 200:
-                data[fs]["status"] = "not_connect"
+                await self.get_sets()
+                data_backup = self.sets.get(fs)
+                if data_backup:
+                    data[fs] = data_backup
+                    data[fs]["status"] = "data_backup"
+                else:
+                    data[fs]["status"] = "no_data"
             else:
                 data[fs] = json
                 data[fs]["status"] = "inwork"
+                data[fs]["dttm_data"] = curdt_mysql() + ' ' + curtm_mysql()
+                del data[fs]["_id"]
+                data[fs]["id"] = fs
+                await self.put_set({"id":fs,"value":data[fs]})
         return data

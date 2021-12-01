@@ -134,6 +134,15 @@ html, body {
   line-height: 5%;
   font-size: 150%;
 }
+.dsh_card_item_dttm {
+  position: relative;
+  grid-area: a;
+  justify-self: right;
+  margin: 2%;
+  height: 2%;
+  line-height: 2%;
+  font-size: 80%;
+}
 .dsh_card_item_big {
   position: relative;
   justify-self: center;
