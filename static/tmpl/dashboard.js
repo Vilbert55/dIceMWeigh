@@ -2,10 +2,11 @@ TEMPLATE_CARD_DEFAULT = `
 <div class="dsh_card_item" style="top: 8%">Брутто: <span>0</span></div>
 <div class="dsh_card_item" style="top: 16%">Брак: <span>0%</span></div>
 <div class="dsh_card_item" style="top: 24%">Перевес: <span>0%</span></div>
-<div class="dsh_card_item" style="top: 40%">Коробок: <span>0</span></div>
-<div class="dsh_card_item" style="top: 48%">Штук: <span>0</span></div>
-<div class="dsh_card_item" style="top: 56%">План: <span>0%</span></div>
-<div class="dsh_card_item_big" style="top: 76%;">{fs_name}</div>
+<div class="dsh_card_item" style="top: 32%">Коробок: <span>0</span></div>
+<div class="dsh_card_item" style="top: 40%">Штук: <span>0</span></div>
+<div class="dsh_card_item" style="top: 48%">План: <span>0%</span></div>
+<div class="dsh_card_item" style="top: 56%">Норматив: <span>0</span> шт</div>
+<div class="dsh_card_item_big" style="top: 70%;">{fs_name}</div>
 <div id="status_{fs}" class="dsh_card_item_status" style="top: 86%; background-color: red;"><span id="status_text_{fs}"class="text_status">Нет связи</span></div>
 `;
 TEMPLATE_CARD = `
@@ -13,10 +14,11 @@ TEMPLATE_CARD = `
 <div class="dsh_card_item" style="top: 8%">Брутто: <span>{weight}</span></div>
 <div class="dsh_card_item" style="top: 16%">Брак: <span style="color: {procent_brak_color};">{procent_brak}%</span></div>
 <div class="dsh_card_item" style="top: 24%">Перевес: <span style="color: {procent_pereves_color};">{procent_pereves}%</span></div>
-<div class="dsh_card_item" style="top: 40%">Штук: <span>{count_packages_v2}</span></div>
-<div class="dsh_card_item" style="top: 48%">Коробок: <span>{total_fact}</span></div>
-<div class="dsh_card_item" style="top: 56%">План: <span style="color: {procent_plan_color}">{procent_plan}%</span></div>
-<div class="dsh_card_item_big" style="top: 76%;">{fs_name}</div>
+<div class="dsh_card_item" style="top: 32%">Штук: <span>{count_packages_v2}</span></div>
+<div class="dsh_card_item" style="top: 40%">Коробок: <span>{total_fact}</span></div>
+<div class="dsh_card_item" style="top: 48%">План: <span style="color: {procent_plan_color}">{procent_plan}%</span></div>
+<div class="dsh_card_item" style="top: 56%">Норматив: <span>{normativ}</span> шт</div>
+<div class="dsh_card_item_big" style="top: 70%;">{fs_name}</div>
 <div id="status_{fs}" class="dsh_card_item_status" style="top: 86%; background-color: {fs_status_color};"><span id="status_text_{fs}"class="text_status">{status_text}</span></div>
 `;
 
@@ -84,9 +86,11 @@ function render(data){
         if (fs=="weigh1"){
             var graf_title = "Цех упаковка. Штук - Время"
             data[fs]["fs_name"] = "Цех упаковка";
+            data[fs]["normativ"] = 4000;
         }else{
             var graf_title = "Цех ломтики. Штук - Время"
             data[fs]["fs_name"] = "Цех ломтики";
+            data[fs]["normativ"] = 2000;
         }
         var fscard_html = render_template(TEMPLATE_CARD,data[fs],[]);
         $("#card_"+fs).html(fscard_html);
