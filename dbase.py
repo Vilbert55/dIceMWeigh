@@ -3,6 +3,7 @@ from bson import json_util
 from datetime import datetime, timedelta
 import requests
 import subprocess
+import time
 
 def curdt_mysql():
     return datetime.now().strftime(format="%Y-%m-%d")
@@ -18,6 +19,27 @@ def percentage(part, whole):
     if not (part and whole):
         return 0.0
     return round(100.0 * part/whole, 2)
+def list_get (l, idx, default):
+  try:
+    return l[idx]
+  except IndexError:
+    return default
+def str2time(tmstr):
+    if tmstr is None:
+        tmstr = datetime.datetime.now().strftime(format="%Y-%m-%d %H:%M:%S")
+    if len(tmstr)==16:
+        tmstr += ':00'
+    return time.strptime(tmstr, "%Y-%m-%d %H:%M:%S")
+def deltatimes(tm1,tm2):
+    tm1 = tm1 if tm1 else time.strftime("%Y-%m-%d %H:%M:%S")
+    tm2 = tm2 if tm2 else time.strftime("%Y-%m-%d %H:%M:%S")
+    return time.mktime(str2time(tm2)) - time.mktime(str2time(tm1))
+def seconds_to_hhmmss(seconds):
+    hours = seconds // (60*60)
+    seconds %= (60*60)
+    minutes = seconds // 60
+    seconds %= 60
+    return int(hours), int(minutes), int(seconds)
 
 def setup_db():
     return motor.motor_asyncio.AsyncIOMotorClient().IceMWeigh
@@ -77,26 +99,66 @@ class DB:
         result =  await self.db.sets.replace_one({"id":item.get("id")}, item, upsert=True)
         return result
 
+    async def _get_report_head(self, fs, date=None):
+        # Получить текущий отчёт или за определённую дату
+        date = date or curdt_mysql()
+        _filter = {"dttm":{ "$regex": ".*{}.*".format(date),"$options":"i" },"fs":{"$eq" : fs}}
+        document = await self.db.reports_head.find_one(_filter)
+        return document
+
+    async def insert_or_update_report_head(self, item, fs, date=None):
+        report_head = await self._get_report_head(fs, date)
+        if report_head:
+            await self.db.reports_head.update_one({"_id":report_head.get('_id')}, { '$set' : item }, upsert=True)
+        else:
+            await self.db.reports_head.insert_one(item)
+
     async def dashboard_get_values(self):
-        data = {"weigh1":{},"weigh2":{}}
+        data = {"weigh1":{},"weigh2":{},"weigh3":{}}
         for fs in data:
             try:
                 code, json = fsproxy(fs, "/api/v1/report_head","get")
             except:
                 code, json = 500, {}
             if code != 200:
-                await self.get_sets()
-                data_backup = self.sets.get(fs)
+                data_backup = await self._get_report_head(fs)
                 if data_backup:
                     data[fs] = data_backup
                     data[fs]["status"] = "data_backup"
+                    del data[fs]["_id"]
                 else:
                     data[fs]["status"] = "no_data"
             else:
                 data[fs] = json
-                data[fs]["status"] = "inwork"
+                data[fs]["status"] = "online"
+                data[fs]["fs"] = fs
                 data[fs]["dttm_data"] = curdt_mysql() + ' ' + curtm_mysql()
                 del data[fs]["_id"]
-                data[fs]["id"] = fs
-                await self.put_set({"id":fs,"value":data[fs]})
+                await self.insert_or_update_report_head(data[fs], fs)
         return data
+
+    async def worktime_get_values(self, jdata):
+        date, fs = jdata.get('date'), jdata.get('fs')
+        report = await self._get_report_head(fs, date)
+        if not report or not report.get('work_intervals'):
+            return False
+        result = {'intervals':[]}
+        work_time = 0
+        for interval in report['work_intervals']:
+            item = {}
+            item['tm1'] = list_get(interval, 0, 'нет данных')
+            item['tm2'] = list_get(interval, 1, 'нет данных')
+            if len(interval) == 2:
+                worktime_seconds = deltatimes(interval[0],interval[1])
+                hh,mm,ss = seconds_to_hhmmss(worktime_seconds)
+                item['worktime_seconds'] = worktime_seconds
+                item['worktime_str'] = "%s часов %s минут" % (hh,mm)
+                work_time += worktime_seconds
+            else:
+                item['worktime_str'] = 'нет данных'
+            (result['intervals']).append(item)
+        hh,mm,ss = seconds_to_hhmmss(work_time)
+        result['worktime_seconds'] = work_time
+        result['worktime_str'] = "%s часов %s минут" % (hh,mm)
+        return result
+            

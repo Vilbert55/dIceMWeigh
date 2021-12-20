@@ -12,6 +12,7 @@
 {% block content %}
       <nav class="col-12 navbar bar">
         <div class="navbar-toggler" id="head">ИТА "СЕВЕРНАЯ КОМПАНИЯ"</div>
+        <button onclick="window.location.href='/report/worktime/'" class="btn btn-warning my-2 my-sm-0" style="margin: 0 1%;">Время работы цехов</button>
       </nav>
 
   <div class="container-fluid max">
@@ -19,6 +20,7 @@
       <div class="col-6 g0 fill" style="text-align: center;">
         <div class="row graf_container" id="graf_weigh1"></div>
         <div class="row graf_container" id="graf_weigh2"></div>
+        <div class="row graf_container" id="graf_weigh3"></div>
       </div>
 
       <div class="col-6 g1">
@@ -26,6 +28,8 @@
           <div class="col-6 dashboard_card" id="card_weigh1">
           </div>
           <div class="col-6 dashboard_card" id="card_weigh2">
+          </div>
+          <div class="col-6 dashboard_card" id="card_weigh3">
           </div>
         </div>
       </div>

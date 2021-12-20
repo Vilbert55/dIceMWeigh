@@ -9,10 +9,6 @@ routes = web.RouteTableDef()
 async def test(request):
     return web.Response(text="it's working!")
 
-@routes.get('/dashboard/')
-async def main(request):
-    return tresponse(request,"dashboard.html",{"val":"tut value"})
-
 @routes.get(url_api('/sets'))
 @log
 async def sets(request):
@@ -26,7 +22,21 @@ async def put_set(request):
     result = await request.app['db'].put_set(jdata)
     return jmresponse(upresult(result) ,200)
 
+@routes.get('/dashboard/')
+async def dashboard(request):
+    return tresponse(request,"dashboard.html",{"key":"some value"})
+
 @routes.get(url_api('/dashboard_get_values'))
 async def dashboard_get_values(request):
     response = await request.app['db'].dashboard_get_values()
+    return jresponse(response, 200)
+
+@routes.get('/report/worktime/')
+async def worktime(request):
+    return tresponse(request,"report_worktime.html",{})
+
+@routes.post(url_api('/get_values/report_worktime'))
+async def worktime_get_values(request):
+    jdata = await request.json()
+    response = await request.app['db'].worktime_get_values(jdata)
     return jresponse(response, 200)

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="/static/css/date.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/datatables.css"> 
+    <link rel="stylesheet" href="/static/css/kbd.css">
+    <script src="/static/js/cssworld.ru-xcal.js"></script>
+    <script type="text/javascript" charset="utf8" src="/static/js/datatables.js"></script>
+    <script src="/static/js/template.js"></script>
+    <script src="/static/tmpl/report_worktime.js"></script>
+    <script src="/static/js/queries.js"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid" style="height: 100%;background-color:lightgray">
+    <nav class="col-12 navbar bar">
+        <div class="navbar-toggler" id="head">Время работы цехов</div>
+    </nav>
+    <br>
+    <div class="row" style="vertical-align: middle;">
+        
+        <div class="input-group m-3 w-25" >
+            <select id="fs" class="form-select" aria-label="Default select example">
+                <option value="weigh1">Цех упаковка</option>
+                <option value="weigh2">Цех ломтики</option>
+                <option value="weigh3">Цех шокфрост</option>
+            </select>
+        </div>
+        <div class="input-group m-3 w-25" >
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">Дата:</span>
+            </div>
+            <input id="date" type="text" class="form-control" aria-describedby="basic-addon1" onClick="xCal(this)" onKeyUp="xCal()" onChange="main()">
+        </div>
+        <div class="input-group m-3 w-25" >            
+            <div class="input-group-prepend">
+                <span class="btn btn-primary" onClick="data_input()" id="basic-addon1">Показать</span>
+              </div>
+        </div>
+    </div>
+    <br>
+    <div id="total_values" class="worktime-totalvalues">
+    </div>
+    <table class="table table-striped" id="table"></table>
+    <br>
+</div>
+
+{% endblock %}

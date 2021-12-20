@@ -1,11 +1,11 @@
 TEMPLATE_CARD_DEFAULT = `
-<div class="dsh_card_item" style="top: 8%">Брутто: <span>0</span></div>
-<div class="dsh_card_item" style="top: 16%">Брак: <span>0%</span></div>
-<div class="dsh_card_item" style="top: 24%">Перевес: <span>0%</span></div>
-<div class="dsh_card_item" style="top: 32%">Коробок: <span>0</span></div>
-<div class="dsh_card_item" style="top: 40%">Штук: <span>0</span></div>
-<div class="dsh_card_item" style="top: 48%">План: <span>0%</span></div>
-<div class="dsh_card_item" style="top: 56%">Норматив: <span>0</span> шт</div>
+<div class="dsh_card_item" style="top: 8%">Брутто: <span></span></div>
+<div class="dsh_card_item" style="top: 16%">Брак: <span></span></div>
+<div class="dsh_card_item" style="top: 24%">Перевес: <span></span></div>
+<div class="dsh_card_item" style="top: 32%">Коробок: <span></span></div>
+<div class="dsh_card_item" style="top: 40%">Штук: <span></span></div>
+<div class="dsh_card_item" style="top: 48%">План: <span></span></div>
+<div class="dsh_card_item" style="top: 56%">Норматив: <span></span> шт</div>
 <div class="dsh_card_item_big" style="top: 70%;">{fs_name}</div>
 <div id="status_{fs}" class="dsh_card_item_status" style="top: 86%; background-color: red;"><span id="status_text_{fs}"class="text_status">Нет связи</span></div>
 `;
@@ -14,7 +14,7 @@ TEMPLATE_CARD = `
 <div class="dsh_card_item" style="top: 8%">Брутто: <span>{weight}</span></div>
 <div class="dsh_card_item" style="top: 16%">Брак: <span style="color: {procent_brak_color};">{procent_brak}%</span></div>
 <div class="dsh_card_item" style="top: 24%">Перевес: <span style="color: {procent_pereves_color};">{procent_pereves}%</span></div>
-<div class="dsh_card_item" style="top: 32%">Штук: <span>{count_packages_v2}</span></div>
+<div class="dsh_card_item" style="top: 32%">Штук: <span>{count_packages_v3}</span></div>
 <div class="dsh_card_item" style="top: 40%">Коробок: <span>{total_fact}</span></div>
 <div class="dsh_card_item" style="top: 48%">План: <span style="color: {procent_plan_color}">{procent_plan}%</span></div>
 <div class="dsh_card_item" style="top: 56%">Норматив: <span>{normativ}</span> шт</div>
@@ -22,9 +22,9 @@ TEMPLATE_CARD = `
 <div id="status_{fs}" class="dsh_card_item_status" style="top: 86%; background-color: {fs_status_color};"><span id="status_text_{fs}"class="text_status">{status_text}</span></div>
 `;
 
-function drow_graf(container_id, title, data_graf) {
+function drow_graf(container_id, title, data_graf, normativ, max_val) {
     
-    // пример  [надпись под столбцом, значение], цвет столбца
+    // пример  [надпись под столбцом, значение, цвет столбца, хз, хз]
     // data_graf = [
     //     ["9", 2],
     //     ["10", 7],
@@ -40,6 +40,11 @@ function drow_graf(container_id, title, data_graf) {
     //     ["20", 10],
     //     ["21", 10],
     //   ]
+    if(max_val>=normativ){
+        var max_y = max_val;
+    }else{
+        var max_y = normativ;
+    }
 
     $("#"+container_id).html("");
     var data = anychart.data.set(data_graf);
@@ -48,6 +53,15 @@ function drow_graf(container_id, title, data_graf) {
     var series1 = chart.column(seriesData_1);
 
     chart.title(title)
+    chart.yScale().maximum(max_y);
+
+    var controller = chart.annotations();
+    var annotation = controller.horizontalLine();
+    annotation.valueAnchor(normativ);
+
+    // Set stroke.
+    annotation.stroke({color: '#FF0000', thickness: 4, dash: '5 2', lineCap: 'round'});
+
     chart.container(container_id);
     chart.draw();
 
@@ -63,9 +77,14 @@ function render(data){
         if(data[fs]["status"]=="no_data"){
             continue
         }
-        if(data[fs]["status"]=="inwork"){
-            data[fs]["status_text"] = "Работает";
-            data[fs]["fs_status_color"] = "green";
+        if(data[fs]["status"]=="online"){
+            if(data[fs]["work_status"]=="stop"){
+                data[fs]["status_text"] = "Остановлен";
+                data[fs]["fs_status_color"] = "gold";
+            }else{
+                data[fs]["status_text"] = "Работает";
+                data[fs]["fs_status_color"] = "green";
+            }
         }
         if(data[fs]["status"]=="data_backup"){
             data[fs]["status_text"] = "Нет связи";
@@ -87,9 +106,13 @@ function render(data){
             var graf_title = "Цех упаковка. Штук - Время"
             data[fs]["fs_name"] = "Цех упаковка";
             data[fs]["normativ"] = 4000;
-        }else{
+        }else if(fs=="weigh2"){
             var graf_title = "Цех ломтики. Штук - Время"
             data[fs]["fs_name"] = "Цех ломтики";
+            data[fs]["normativ"] = 2000;
+        }else if(fs=="weigh3"){
+            var graf_title = "Цех шокфрост. Штук - Время"
+            data[fs]["fs_name"] = "Цех шокфрост";
             data[fs]["normativ"] = 2000;
         }
         var fscard_html = render_template(TEMPLATE_CARD,data[fs],[]);
@@ -99,7 +122,13 @@ function render(data){
         var prods_for_graf = [];
         var max_cnt = 0;
         for(i in prods_by_hours){
-            var cur_cnt = (prods_by_hours[i]["prods_list"]).length;
+            var prods_list = prods_by_hours[i]["prods_list"];
+            var cur_cnt = 0;
+            for(j in prods_list){
+                if(prods_list[j]["status"]!="Брак"){
+                    cur_cnt += prods_list[j]["pack_qtt_v2"];
+                }
+            }
             if (cur_cnt>max_cnt){
                 max_cnt = cur_cnt
             }
@@ -117,7 +146,7 @@ function render(data){
         prods_for_graf.sort(function(a, b) {
             return a[0]>b[0];
           });
-        drow_graf(graf_id,graf_title, prods_for_graf)
+        drow_graf(graf_id,graf_title, prods_for_graf, data[fs]["normativ"], max_cnt)
     }
 }
 
@@ -128,8 +157,10 @@ function main(){
 function set_default_cards(){
     var fscard1_html = render_template(TEMPLATE_CARD_DEFAULT,{fs:"weigh1",fs_name:"Цех упаковка"},[]);
     var fscard2_html = render_template(TEMPLATE_CARD_DEFAULT,{fs:"weigh2",fs_name:"Цех ломтики"},[]);
+    var fscard3_html = render_template(TEMPLATE_CARD_DEFAULT,{fs:"weigh3",fs_name:"Цех шокфрост"},[]);
     $("#card_weigh1").html(fscard1_html);
     $("#card_weigh2").html(fscard2_html);
+    $("#card_weigh3").html(fscard3_html);
     main();
 }
 

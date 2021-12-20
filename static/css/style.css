@@ -104,7 +104,7 @@ html, body {
     background:#d0d0d0;
 }
 .dashboard_cards {
-  height: 49%;
+  height: 100%;
   min-height: 49%;
   margin:0;
   padding:0;
@@ -120,7 +120,7 @@ html, body {
 .graf_container {
   margin: 1% 1%;
   background-color: white;
-  height: 48%;
+  height: 33%;
 }
 .graf_col{
   width: 5%;
@@ -132,7 +132,7 @@ html, body {
   margin: 1%;
   /* height: 5%;
   line-height: 5%; */
-  font-size: 1.8vw;
+  font-size: max(1.5vw,1.5vh);
 }
 .dsh_card_item_dttm {
   position: relative;
@@ -141,7 +141,7 @@ html, body {
   margin: 2%;
   /* height: 2%;
   line-height: 2%; */
-  font-size: 1vw;
+  font-size: max(1vw,1vh);
 }
 .dsh_card_item_big {
   position: relative;
@@ -150,7 +150,7 @@ html, body {
   margin: 0.5%;
   /* height: 20%;
   line-height: 10%; */
-  font-size:2.4vw;
+  font-size: max(2.4vw,2.4vh);
   font-weight: 700;
 }
 .dsh_card_item_status {
@@ -162,6 +162,7 @@ html, body {
   line-height: 10%;
   border-radius: 10px;
   width: 50%;
+  font-size: max(1.5vw,1.5vh);
 }
 .text_status{
   display: block;
@@ -170,5 +171,13 @@ html, body {
   position: relative;
   color: white;
   font-weight: 600;
-  font-size: 1.2vw;
+  font-size: max(1.2vw,1.2vh);
+}
+.worktime-totalvalues{
+  width: 30rem;
+  margin-left: 2rem;
+  margin-bottom: 2rem;
+  border: 1px solid black;
+  border-radius: 4px;
+  font-size: 120%;
 }
