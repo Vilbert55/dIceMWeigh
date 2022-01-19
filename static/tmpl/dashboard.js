@@ -126,7 +126,7 @@ function render(data){
             var cur_cnt = 0;
             for(j in prods_list){
                 if(prods_list[j]["status"]!="Брак"){
-                    cur_cnt += prods_list[j]["pack_qtt_v2"];
+                    cur_cnt += prods_list[j]["pack_qtt_v3"];
                 }
             }
             if (cur_cnt>max_cnt){
