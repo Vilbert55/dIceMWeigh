@@ -70,6 +70,9 @@ function drow_graf(container_id, title, data_graf, normativ, max_val) {
 function render(data){
     console.log(data);
     for(fs in data){
+        if(fs=="weigh3_backup"||fs=="weigh1_backup"){
+            continue
+        }
         if(data[fs]["status"]=="no_data" || data[fs]["status"]=="data_backup"){
             $("#status_" + fs).css('background-color', 'red');
             $("#status_text" + fs).html('нет связи')
