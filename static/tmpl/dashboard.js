@@ -14,7 +14,7 @@ TEMPLATE_CARD = `
 <div class="dsh_card_item" style="top: 8%">Брутто: <span>{weight}</span></div>
 <div class="dsh_card_item" style="top: 16%">Брак: <span style="color: {procent_brak_color};">{procent_brak}%</span></div>
 <div class="dsh_card_item" style="top: 24%">Перевес: <span style="color: {procent_pereves_color};">{procent_pereves}%</span></div>
-<div class="dsh_card_item" style="top: 32%">Штук: <span>{count_packages_v3}</span></div>
+<div class="dsh_card_item" style="top: 32%">Штук: <span>{count_packages_v2}</span></div>
 <div class="dsh_card_item" style="top: 40%">Коробок: <span>{total_fact}</span></div>
 <div class="dsh_card_item" style="top: 48%">План: <span style="color: {procent_plan_color}">{procent_plan}%</span></div>
 <div class="dsh_card_item" style="top: 56%">Норматив: <span>{normativ}</span> шт</div>
@@ -126,7 +126,7 @@ function render(data){
             var cur_cnt = 0;
             for(j in prods_list){
                 if(prods_list[j]["status"]!="Брак"){
-                    cur_cnt += prods_list[j]["pack_qtt_v3"];
+                    cur_cnt += prods_list[j]["pack_qtt_v2"];
                 }
             }
             if (cur_cnt>max_cnt){
@@ -157,10 +157,10 @@ function main(){
 function set_default_cards(){
     var fscard1_html = render_template(TEMPLATE_CARD_DEFAULT,{fs:"weigh1",fs_name:"Цех упаковка"},[]);
     var fscard2_html = render_template(TEMPLATE_CARD_DEFAULT,{fs:"weigh2",fs_name:"Цех ломтики"},[]);
-    var fscard3_html = render_template(TEMPLATE_CARD_DEFAULT,{fs:"weigh3",fs_name:"Цех шокфрост"},[]);
+    //var fscard3_html = render_template(TEMPLATE_CARD_DEFAULT,{fs:"weigh3",fs_name:"Цех шокфрост"},[]);
     $("#card_weigh1").html(fscard1_html);
     $("#card_weigh2").html(fscard2_html);
-    $("#card_weigh3").html(fscard3_html);
+    //$("#card_weigh3").html(fscard3_html);
     main();
 }
 

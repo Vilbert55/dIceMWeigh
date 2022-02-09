@@ -135,6 +135,34 @@ class DB:
                 data[fs]["dttm_data"] = curdt_mysql() + ' ' + curtm_mysql()
                 del data[fs]["_id"]
                 await self.insert_or_update_report_head(data[fs], fs)
+        result = await self.merge_dashboard_values(data)
+        return result
+
+    async def merge_dashboard_values(self, data):
+        # объединяем данные weigh1 и weigh3
+        data["weigh1_backup"] = data["weigh1"]
+        data["weigh3_backup"] = data["weigh3"]
+        summ_fields = ["count", "weight", "count_h", "weight_brak", "total_fact", "count_pereves",
+            "count_packages", "count_packages_v2", "count_packages_v3_h", "count_packages_v3"]
+        for k in summ_fields:
+            data["weigh1"][k] += data["weigh3"][k]
+            data["weigh1"][k] = round(data["weigh1"][k], 2)
+        for h2 in data["weigh3"]["prods_by_hours"]:
+            for h in data["weigh1"]["prods_by_hours"]:
+                if h["hour"] == h2["hour"]:
+                    h["prods_list"] += h2["prods_list"]
+        data["weigh1"]["procent_brak"] = percentage(data["weigh1"]["weight_brak"], data["weigh1"]["weight"])
+        data["weigh1"]["procent_pereves"] = percentage(data["weigh1"]["count_pereves"], data["weigh1"]["total_fact"])
+        data["weigh1"]["procent_plan"] = percentage(data["weigh1"]["total_fact"], data["weigh1"]["total_plan"])
+
+        if "no_data" in (data["weigh1"]["status"], data["weigh3"]["status"]):
+            data["weigh1"]["status"] = "no_data"
+        elif "data_backup" in (data["weigh1"]["status"], data["weigh3"]["status"]):
+            data["weigh1"]["status"] = "data_backup"
+        if "stop" in (data["weigh1"]["work_status"], data["weigh3"]["work_status"]):
+            data["weigh1"]["work_status"] = "stop"
+        data["weigh1"]["dttm"] = min(data["weigh3"]["dttm"], data["weigh1"]["dttm"])
+        del data["weigh3"]
         return data
 
     async def worktime_get_values(self, jdata):
