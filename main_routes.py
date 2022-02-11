@@ -23,19 +23,23 @@ async def put_set(request):
     return jmresponse(upresult(result) ,200)
 
 @routes.get('/dashboard/')
+@log
 async def dashboard(request):
     return tresponse(request,"dashboard.html",{"key":"some value"})
 
 @routes.get(url_api('/dashboard_get_values'))
+@log
 async def dashboard_get_values(request):
     response = await request.app['db'].dashboard_get_values()
     return jresponse(response, 200)
 
 @routes.get('/report/worktime/')
+@log
 async def worktime(request):
     return tresponse(request,"report_worktime.html",{})
 
 @routes.post(url_api('/get_values/report_worktime'))
+@log
 async def worktime_get_values(request):
     jdata = await request.json()
     response = await request.app['db'].worktime_get_values(jdata)
