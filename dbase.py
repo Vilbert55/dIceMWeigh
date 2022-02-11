@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 import requests
 import subprocess
 import time
+from config import Debug
 
 def curdt_mysql():
     return datetime.now().strftime(format="%Y-%m-%d")
@@ -114,6 +115,7 @@ class DB:
             await self.db.reports_head.insert_one(item)
 
     async def dashboard_get_values(self):
+        Debug.info("begin get values for dashboard")
         data = {"weigh1":{},"weigh2":{},"weigh3":{}}
         for fs in data:
             try:
@@ -123,12 +125,15 @@ class DB:
             if code != 200:
                 data_backup = await self._get_report_head(fs)
                 if data_backup:
+                    Debug.warning("dashboard_get_values: %s data_backup, response_code %s" % (fs, code))
                     data[fs] = data_backup
                     data[fs]["status"] = "data_backup"
                     del data[fs]["_id"]
                 else:
+                    Debug.warning("dashboard_get_values: %s no data" % fs)
                     data[fs]["status"] = "no_data"
             else:
+                Debug.info("dashboard_get_values: %s response_code %s" % (fs, code))
                 data[fs] = json
                 data[fs]["status"] = "online"
                 data[fs]["fs"] = fs

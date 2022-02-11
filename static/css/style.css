@@ -114,7 +114,7 @@ html, body {
   grid-template-areas: "a";
   background-color: white;
   border-radius: 8px;
-  width: 48%;
+  width: 96%;
   margin: 1%;
 }
 .graf_container {
