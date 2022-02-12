@@ -167,7 +167,7 @@ class DB:
                 data["weigh1"]["status"] = "data_backup"
             if "stop" in (data["weigh1"]["work_status"], data["weigh3"]["work_status"]):
                 data["weigh1"]["work_status"] = "stop"
-            data["weigh1"]["dttm"] = min(data["weigh3"]["dttm"], data["weigh1"]["dttm"])
+            data["weigh1"]["dttm_data"] = min(data["weigh3"]["dttm_data"], data["weigh1"]["dttm_data"])
         elif data["weigh3"]["status"] != "no_data" and data["weigh1"]["status"] == "no_data":
             data["weigh1"] = data["weigh3"]
                     
