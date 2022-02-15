@@ -30,7 +30,8 @@ async def dashboard(request):
 @routes.get(url_api('/dashboard_get_values'))
 @log
 async def dashboard_get_values(request):
-    response = await request.app['db'].dashboard_get_values()
+    dt = request.rel_url.query.get('dt')
+    response = await request.app['db'].dashboard_get_values(dt)
     return jresponse(response, 200)
 
 @routes.get('/report/worktime/')

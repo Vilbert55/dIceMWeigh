@@ -7,7 +7,7 @@ TEMPLATE_CARD_DEFAULT = `
 <div class="dsh_card_item" style="top: 48%">План: <span></span></div>
 <div class="dsh_card_item" style="top: 56%">Норматив: <span></span> шт</div>
 <div class="dsh_card_item_big" style="top: 70%;">{fs_name}</div>
-<div id="status_{fs}" class="dsh_card_item_status" style="top: 86%; background-color: red;"><span id="status_text_{fs}"class="text_status">Нет связи</span></div>
+<div id="status_{fs}" class="dsh_card_item_status" style="top: 86%; background-color: red;"><span id="status_text_{fs}"class="text_status">загрузка</span></div>
 `;
 TEMPLATE_CARD = `
 <div class="dsh_card_item_dttm" style="top: 1%">Данные от: <span>{dttm_data}</span></div>
@@ -73,11 +73,22 @@ function render(data){
         if(fs=="weigh3_backup"||fs=="weigh1_backup"){
             continue
         }
-        if(data[fs]["status"]=="no_data" || data[fs]["status"]=="data_backup"){
-            $("#status_" + fs).css('background-color', 'red');
-            $("#status_text" + fs).html('нет связи')
+        $("#status_" + fs).show();
+        if(data[fs]["status"]=="data_backup"){
+            if(DATE != ""){
+                console.log("скрываем","#status_" + fs);
+                $("#status_" + fs).hide();
+            }else{
+                data[fs]["fs_status_color"] = "red";
+                $("#status_" + fs).css('background-color', 'red');
+                $("#status_text_" + fs).html('нет связи');
+            }
         }
         if(data[fs]["status"]=="no_data"){
+            flush_card(fs);
+            $("#status_" + fs).css('background-color', 'red');
+            console.log(fs,"нет данных");
+            $("#status_text_" + fs).html('нет данных');
             continue
         }
         if(data[fs]["status"]=="online"){
@@ -88,10 +99,6 @@ function render(data){
                 data[fs]["status_text"] = "Работает";
                 data[fs]["fs_status_color"] = "green";
             }
-        }
-        if(data[fs]["status"]=="data_backup"){
-            data[fs]["status_text"] = "Нет связи";
-            data[fs]["fs_status_color"] = "red";
         }
         if(data[fs]["procent_brak"] > 6){
             data[fs]["procent_brak_color"] = "red";
@@ -118,6 +125,7 @@ function render(data){
             data[fs]["fs_name"] = "Цех шокфрост";
             data[fs]["normativ"] = 2000;
         }
+        data[fs]["fs"] = fs;
         var fscard_html = render_template(TEMPLATE_CARD,data[fs],[]);
         $("#card_"+fs).html(fscard_html);
         var graf_id = "graf_" + fs;
@@ -154,20 +162,43 @@ function render(data){
 }
 
 function main(){
-    query("get","/dashboard_get_values",{},render);
+    $(".dsh_card_item_status").show();
+    $(".text_status").html("загрузка");
+    params = {"dt":DATE};
+    query("get","/dashboard_get_values",params,render);
 }
 
 function set_default_cards(){
-    var fscard1_html = render_template(TEMPLATE_CARD_DEFAULT,{fs:"weigh1",fs_name:"Цех упаковка"},[]);
-    var fscard2_html = render_template(TEMPLATE_CARD_DEFAULT,{fs:"weigh2",fs_name:"Цех ломтики"},[]);
-    //var fscard3_html = render_template(TEMPLATE_CARD_DEFAULT,{fs:"weigh3",fs_name:"Цех шокфрост"},[]);
-    $("#card_weigh1").html(fscard1_html);
-    $("#card_weigh2").html(fscard2_html);
-    //$("#card_weigh3").html(fscard3_html);
+    flush_card("weigh1");
+    flush_card("weigh2");
     main();
+}
+function flush_card(fs){
+    var names = {
+        "weigh1": "Цех упаковка",
+        "weigh2": "Цех ломтики",
+        "weigh3": "Цех шокфрост"
+    }
+    var fscard_html = render_template(TEMPLATE_CARD_DEFAULT,{fs:fs,fs_name: names[fs]},[]);
+    $("#card_"+fs).html(fscard_html);
+    $("#graf_"+fs).html("");
+
 }
 
 $( document ).ready(function() {
+    DATE = $("#date").val();
+    xCal.set({
+        lang: "ru", 
+        order: 1, // Обратный порядок
+        delim: "-" // Разделитель между числами тире
+    });
     set_default_cards();
     setInterval(main, 300000);
+    setInterval(function(){
+        if (DATE != $("#date").val()){
+            DATE = $("#date").val();
+            console.log("date changed");
+            main();
+        };
+    }, 100);
 });

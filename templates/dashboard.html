@@ -3,7 +3,9 @@
 {% block head %}
     {{ super() }}
     <link rel="stylesheet" href="/static/css/kbd.css">
-    <script src="https://cdn.anychart.com/js/latest/anychart-bundle.min.js"></script>
+    <link rel="stylesheet" href="/static/css/date.css">
+    <script src="/static/js/cssworld.ru-xcal.js"></script>
+    <script src="/static/js/anychart-bundle.min.js"></script>
     <script src="/static/js/queries.js"></script>
     <script src="/static/js/template.js"></script>
     <script src="/static/tmpl/dashboard.js"></script>
@@ -12,6 +14,14 @@
 {% block content %}
       <nav class="col-12 navbar bar">
         <div class="navbar-toggler" id="head">ИТА "СЕВЕРНАЯ КОМПАНИЯ"</div>
+          <div class="row" style="vertical-align: middle;">
+          <div class="col-4" style="padding-right: 0; margin-right: -5px;">
+            <span id="basic-addon1" class="input-group-text">Выбор даты</span>
+          </div>
+          <div class="col-8" style="padding-left: 0;">
+            <input class="form-control" id="date" type="text" aria-describedby="basic-addon1" onClick="xCal(this)" onKeyUp="xCal();" autocomplete="off">
+          </div>
+        </div>
         <button onclick="window.location.href='/report/worktime/'" class="btn btn-warning my-2 my-sm-0" style="margin: 0 1%;">Время работы цехов</button>
       </nav>
 

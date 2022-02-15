@@ -114,18 +114,21 @@ class DB:
         else:
             await self.db.reports_head.insert_one(item)
 
-    async def dashboard_get_values(self):
+    async def dashboard_get_values(self, dt):
         Debug.info("begin get values for dashboard")
         data = {"weigh1":{},"weigh2":{},"weigh3":{}}
         for fs in data:
-            try:
-                code, json = fsproxy(fs, "/api/v1/report_head","get")
-            except:
-                code, json = 500, {}
+            code, json = 500, {}
+            if not dt:
+                try:
+                    code, json = fsproxy(fs, "/api/v1/report_head","get")
+                except:
+                    pass
             if code != 200:
-                data_backup = await self._get_report_head(fs)
+                data_backup = await self._get_report_head(fs, dt)
                 if data_backup:
-                    Debug.warning("dashboard_get_values: %s data_backup, response_code %s" % (fs, code))
+                    if not dt:
+                        Debug.warning("dashboard_get_values: %s data_backup, response_code %s" % (fs, code))
                     data[fs] = data_backup
                     data[fs]["status"] = "data_backup"
                     del data[fs]["_id"]
