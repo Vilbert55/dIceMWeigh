@@ -12,14 +12,18 @@ TEMPLATE_CARD_DEFAULT = `
 TEMPLATE_CARD = `
 <div class="dsh_card_item_dttm" style="top: 1%">Данные от: <span>{dttm_data}</span></div>
 <div class="dsh_card_item" style="top: 8%">Брутто: <span>{weight}</span></div>
-<div class="dsh_card_item" style="top: 16%">Брак: <span style="color: {procent_brak_color};">{procent_brak}%</span></div>
-<div class="dsh_card_item" style="top: 24%">Перевес: <span style="color: {procent_pereves_color};">{procent_pereves}%</span></div>
-<div class="dsh_card_item" style="top: 32%">Штук: <span>{count_packages_v2}</span></div>
-<div class="dsh_card_item" style="top: 40%">Коробок: <span>{total_fact}</span></div>
-<div class="dsh_card_item" style="top: 48%">План: <span style="color: {procent_plan_color}">{procent_plan}%</span></div>
-<div class="dsh_card_item" style="top: 56%">Норматив: <span>{normativ}</span> шт</div>
-<div class="dsh_card_item_big" style="top: 70%;">{fs_name}</div>
-<div id="status_{fs}" class="dsh_card_item_status" style="top: 86%; background-color: {fs_status_color};"><span id="status_text_{fs}"class="text_status">{status_text}</span></div>
+<div class="dsh_card_item" style="top: 14%">Брак: <span style="color: {procent_brak_color};">{procent_brak}%</span></div>
+<div class="dsh_card_item" style="top: 20%">Брак, шт: <span style="color: {procent_brak_color};">{count_packages_v2_brak}</span></div>
+<div class="dsh_card_item" style="top: 26%">Брак, кг: <span style="color: {procent_brak_color};">{weight_brak}</span></div>
+<div class="dsh_card_item" style="top: 32%">Перевес: <span style="color: {procent_pereves_color};">{procent_pereves}%</span></div>
+<div class="dsh_card_item" style="top: 38%">Перевес, шт: <span style="color: {procent_pereves_color};">{count_packages_v2_pereves}</span></div>
+<div class="dsh_card_item" style="top: 44%">Перевес, кг: <span style="color: {procent_pereves_color};">{weight_pereves}</span></div>
+<div class="dsh_card_item" style="top: 50%">Штук: <span>{count_packages_v2}</span></div>
+<div class="dsh_card_item" style="top: 56%">Коробок: <span>{total_fact}</span></div>
+<div class="dsh_card_item" style="top: 62%">План: <span style="color: {procent_plan_color}">{procent_plan}%</span></div>
+<div class="dsh_card_item" style="top: 68%">Норматив: <span>{normativ}</span> шт</div>
+<div class="dsh_card_item_big" style="top: 74%;">{fs_name}</div>
+<div id="status_{fs}" class="dsh_card_item_status" style="top: 89%; background-color: {fs_status_color}; display: {display}"><span id="status_text_{fs}"class="text_status">{status_text}</span></div>
 `;
 
 function drow_graf(container_id, title, data_graf, normativ, max_val) {
@@ -74,14 +78,17 @@ function render(data){
             continue
         }
         $("#status_" + fs).show();
+        data[fs]["display"] = "";
         if(data[fs]["status"]=="data_backup"){
             if(DATE != ""){
+                data[fs]["display"] = "none";
                 console.log("скрываем","#status_" + fs);
-                $("#status_" + fs).hide();
             }else{
                 data[fs]["fs_status_color"] = "red";
                 $("#status_" + fs).css('background-color', 'red');
                 $("#status_text_" + fs).html('нет связи');
+                data[fs]["status_text"] = "нет связи";
+                data[fs]["fs_status_color"] = "red";
             }
         }
         if(data[fs]["status"]=="no_data"){
@@ -126,6 +133,7 @@ function render(data){
             data[fs]["normativ"] = 2000;
         }
         data[fs]["fs"] = fs;
+        data[fs]["weight_pereves"] = (data[fs]["weight_pereves"]).toFixed(2); 
         var fscard_html = render_template(TEMPLATE_CARD,data[fs],[]);
         $("#card_"+fs).html(fscard_html);
         var graf_id = "graf_" + fs;
@@ -162,8 +170,11 @@ function render(data){
 }
 
 function main(){
-    $(".dsh_card_item_status").show();
+    // $("#status_weigh1").show();
+    // $("#status_weigh2").show();
     $(".text_status").html("загрузка");
+    $(".dsh_card_item_status").show();
+    $(".dsh_card_item_status").css('background-color', 'red');
     params = {"dt":DATE};
     query("get","/dashboard_get_values",params,render);
 }

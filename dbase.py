@@ -20,7 +20,7 @@ def percentage(part, whole):
     if not (part and whole):
         return 0.0
     return round(100.0 * part/whole, 2)
-def list_get (l, idx, default):
+def list_get (l, idx, default=None):
   try:
     return l[idx]
   except IndexError:
@@ -107,12 +107,52 @@ class DB:
         document = await self.db.reports_head.find_one(_filter)
         return document
 
+    async def _get_reports_head(self, fs, dt1, dt2):
+        # получить список отчётов за интервал
+        _filter = {"dttm": {"$gte": dt1, "$lte": dt2}, "fs": fs}
+        document = await self.db.reports_head.find(_filter).sort("dttm").to_list(length=100)
+        return document
+
     async def insert_or_update_report_head(self, item, fs, date=None):
+        if item.get("_id"):
+            del item["_id"]
         report_head = await self._get_report_head(fs, date)
         if report_head:
+            Debug.info("update reports_head _id:%s" % report_head.get('_id'))
             await self.db.reports_head.update_one({"_id":report_head.get('_id')}, { '$set' : item }, upsert=True)
         else:
+            Debug.info("insert reports_head fs: %s date:%s" % (fs, date))
             await self.db.reports_head.insert_one(item)
+
+    async def upd_report_head(self, report):
+        if report["status"] == "no_data":
+            return report
+        report["count_packages_v2_brak"] = 0
+        report["count_packages_v3_brak"] = 0
+        report["count_packages_v2_pereves"] = 0
+        report["count_packages_v3_pereves"] = 0
+        report["weight_pereves"] = 0
+        report["count_packages_v2_norma"] = 0
+        report["count_packages_v3_norma"] = 0
+        report["weight_norma"] = 0
+        report["allprods"] = []
+        for i in report["prods_by_hours"]:
+            for j in i["prods_list"]:
+                report["allprods"].append(j)
+                if j["status"] == "Перевес":
+                    report["count_packages_v2_pereves"] += j["pack_qtt_v2"]
+                    report["count_packages_v3_pereves"] += j["pack_qtt_v3"]
+                    report["weight_pereves"] += j["weight_prod"]
+                if j["status"] == "Брак":
+                    report["count_packages_v2_brak"] += j["pack_qtt_v2"]
+                    report["count_packages_v3_brak"] += j["pack_qtt_v3"]
+                if j["status"] == "Норма":
+                    report["count_packages_v2_norma"] += j["pack_qtt_v2"]
+                    report["count_packages_v3_norma"] += j["pack_qtt_v3"]
+                    report["weight_norma"] += j["weight_prod"]
+        if report.get("_id"):
+            del report["_id"]
+        return report
 
     async def dashboard_get_values(self, dt):
         Debug.info("begin get values for dashboard")
@@ -131,18 +171,30 @@ class DB:
                         Debug.warning("dashboard_get_values: %s data_backup, response_code %s" % (fs, code))
                     data[fs] = data_backup
                     data[fs]["status"] = "data_backup"
-                    del data[fs]["_id"]
                 else:
-                    Debug.warning("dashboard_get_values: %s no data" % fs)
-                    data[fs]["status"] = "no_data"
-            else:
+                    if not dt:
+                        Debug.warning("dashboard_get_values: %s no data" % fs)
+                        data[fs]["status"] = "no_data"
+                    else:
+                        try:
+                            code, json = fsproxy(fs, "/api/v1/report_head","get")
+                        except:
+                            pass
+                        if code != 200:
+                            data[fs]["status"] = "no_data"
+            if code == 200:
                 Debug.info("dashboard_get_values: %s response_code %s" % (fs, code))
                 data[fs] = json
-                data[fs]["status"] = "online"
                 data[fs]["fs"] = fs
-                data[fs]["dttm_data"] = curdt_mysql() + ' ' + curtm_mysql()
-                del data[fs]["_id"]
-                await self.insert_or_update_report_head(data[fs], fs)
+                if not dt:
+                    data[fs]["dttm_data"] = curdt_mysql() + ' ' + curtm_mysql()
+                    data[fs]["status"] = "online"
+                    await self.insert_or_update_report_head(data[fs], fs)
+                else:
+                    data[fs]["dttm_data"] = json["dttm"]
+                    data[fs]["status"] = "data_backup"
+                    await self.insert_or_update_report_head(data[fs], fs, dt)
+            data[fs] = await self.upd_report_head(data[fs])
         result = await self.merge_dashboard_values(data)
         return result
 
@@ -178,27 +230,42 @@ class DB:
         return data
 
     async def worktime_get_values(self, jdata):
-        date, fs = jdata.get('date'), jdata.get('fs')
-        report = await self._get_report_head(fs, date)
-        if not report or not report.get('work_intervals'):
-            return False
+        date1, date2, fs = jdata.get('date1') + " 00:00:00", jdata.get('date2') + " 23:59:59", jdata.get('fs')
+        reports = await self._get_reports_head(fs, date1, date2)
         result = {'intervals':[]}
         work_time = 0
-        for interval in report['work_intervals']:
-            item = {}
-            item['tm1'] = list_get(interval, 0, 'нет данных')
-            item['tm2'] = list_get(interval, 1, 'нет данных')
-            if len(interval) == 2:
-                worktime_seconds = deltatimes(interval[0],interval[1])
+        count_packages_v2_norma = 0
+        for report in reports:
+            report = await self.upd_report_head(report)
+            if not report.get("allprods"):
+                continue
+            for interval in report['work_intervals']:
+                item = {"count_packages_v2_norma": 0}
+                item['tm1'] = list_get(interval, 0)
+                item['tm2'] = list_get(interval, 1, report["allprods"][-1]["dttm"])
+
+                worktime_seconds = deltatimes(item['tm1'],item['tm2']) or 1
                 hh,mm,ss = seconds_to_hhmmss(worktime_seconds)
                 item['worktime_seconds'] = worktime_seconds
                 item['worktime_str'] = "%s часов %s минут" % (hh,mm)
                 work_time += worktime_seconds
-            else:
-                item['worktime_str'] = 'нет данных'
-            (result['intervals']).append(item)
+
+                for prod in report["allprods"]: 
+                    if prod["dttm"] >= item['tm1'] and prod["dttm"] <= item['tm2']:
+                        if prod["status"] == "Норма":
+                            count_packages_v2_norma += prod["pack_qtt_v2"]
+                            item["count_packages_v2_norma"] += prod["pack_qtt_v2"]
+
+                item["performance"] = round(item["count_packages_v2_norma"]/(worktime_seconds/3600),2)
+                (result['intervals']).append(item)
+
+        if not work_time:
+            return None
         hh,mm,ss = seconds_to_hhmmss(work_time)
         result['worktime_seconds'] = work_time
         result['worktime_str'] = "%s часов %s минут" % (hh,mm)
+        result['count_packages_v2_norma'] = count_packages_v2_norma
+        hours = work_time / 3600
+        result['performanse'] = round(count_packages_v2_norma/hours, 2)
         return result
             
