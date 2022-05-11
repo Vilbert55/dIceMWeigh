@@ -45,3 +45,25 @@ async def worktime_get_values(request):
     jdata = await request.json()
     response = await request.app['db'].worktime_get_values(jdata)
     return jresponse(response, 200)
+
+@routes.get('/prods_list')
+async def prods_list(request):
+    return tresponse(request,"prods_list.html",{})
+
+@routes.post(url_api('/prods_head_list'))
+async def set_username(request):
+    jdata = await request.json()
+    response = await request.app['db'].get_prods_head_total(jdata)
+    return jresponse(response, 200)
+
+@routes.get(url_api('/prods'))
+@log
+async def prods(request):
+    jdata = request.rel_url.query
+    result = await request.app['db'].get_prods(jdata)
+    return jresponse(result,200)
+
+@routes.get('/plan')
+async def prods_list(request):
+    return tresponse(request,"plan.html",{})
+

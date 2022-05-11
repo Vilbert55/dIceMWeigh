@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="/static/css/datatables.css"> 
+    <link rel="stylesheet" href="/static/css/kbd.css">
+    <script type="text/javascript" charset="utf8" src="/static/js/datatables.js"></script>
+    <script src="/static/tmpl/prods_list.js"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid" style="height: 100%;background-color:lightgray">
+    <header class="header">
+        <div class="header-wrap">
+            <div class="header-item">
+                <nav class="navigation">
+                    <a href="/dashboard/" class="btn btn-prev"><span class="icon-arrow"></span></a>
+                </nav>
+                <div class="title-header">Список взвешиваний</div>
+            </div>
+        </div>
+    </header>
+    <div class="input-group m-3 col-2" >
+        <select id="fs" class="form-select" aria-label="Default select example">
+            <option value="weigh1">Комплекс упаковка</option>
+            <option value="weigh2">Комплекс ломтики</option>
+            <option value="weigh3">Комплекс упаковка - 2</option>
+        </select>
+        <span class="btn btn-primary" onClick="main()" id="btn_load">Показать</span>
+    </div>
+    <br>
+    <div class="row" id="back_btn"></div>
+    <br>
+    <div style="font-weight: bold; display: none;" id="head_info">Чтобы увидеть список товаров любого взвешивания - нажмите на него</div>
+    <br>
+    <table class="table table-striped" id="table"></table>
+    <table class="table table-striped" id="table_prods"></table>
+    <br>
+
+</div>
+
+{% endblock %}

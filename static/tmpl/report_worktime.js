@@ -4,7 +4,9 @@ TEMPLATE_INTERVALS_TABLE = `
   <th scope="col">Начало работы</th>
   <th scope="col">Окончание работы</th>
   <th scope="col">Общее время</th>
-  <th scope="col">Штук</th>
+  <th scope="col">Штук (норма и перевес)</th>
+  <th scope="col">Штук брак</th>
+  <th scope="col">% брак</th>
 </tr>
 </thead>
 <tbody id="intervals">
@@ -16,6 +18,8 @@ TEMPLATE_ROW_INTERVAL =`
   <td> {tm2} </td>
   <td> {worktime_str} </td>
   <td> {count_str} </td>
+  <td> {count_str_brak} </td>
+  <td> {percent_brak} </td>
 </tr>
 `;
 xCal.set({
@@ -33,14 +37,16 @@ function render_worktime(data){
         return
     }
     $('.worktime-totalvalues').show();
-    $('#count').html('Штук: ' + data.count_packages_v2_norma);
+    $('#count').html('Штук (норма и перевес): ' + data.count_packages_v4);
     $('#worktime').html('Общее время работы: ' + data.worktime_str);
-    $('#performanse').html('Производительность: ' + data.performanse.toFixed(2) + ' шт/час');
+    $('#performanse').html('Производительность: ' + data.performanse + ' шт/час');
+    $('#percent_cnt_brak').html('Брак: ' + data.count_packages_v4_brak + ' шт | ' + data.percent_brak + '%');
     $('#table').html("");
     $('#table').html(TEMPLATE_INTERVALS_TABLE);
     var table = ""
     for (i in data.intervals){
-        data.intervals[i]["count_str"] = data.intervals[i]["count_packages_v2_norma"].toFixed(0) + " шт"
+        data.intervals[i]["count_str"] = data.intervals[i]["count_packages_v4"].toFixed(0) + " шт"
+        data.intervals[i]["count_str_brak"] = data.intervals[i]["count_packages_v4_brak"].toFixed(0) + " шт"
         var row = render_template(TEMPLATE_ROW_INTERVAL,data.intervals[i],[]);
         table += row;
     }

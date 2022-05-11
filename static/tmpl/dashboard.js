@@ -13,12 +13,12 @@ TEMPLATE_CARD = `
 <div class="dsh_card_item_dttm" style="top: 1%">Данные от: <span>{dttm_data}</span></div>
 <div class="dsh_card_item" style="top: 8%">Брутто: <span>{weight}</span></div>
 <div class="dsh_card_item" style="top: 14%">Брак: <span style="color: {procent_brak_color};">{procent_brak}%</span></div>
-<div class="dsh_card_item" style="top: 20%">Брак, шт: <span style="color: {procent_brak_color};">{count_packages_v2_brak}</span></div>
+<div class="dsh_card_item" style="top: 20%">Брак, шт: <span style="color: {procent_brak_color};">{count_packages_v4_brak}</span></div>
 <div class="dsh_card_item" style="top: 26%">Брак, кг: <span style="color: {procent_brak_color};">{weight_brak}</span></div>
 <div class="dsh_card_item" style="top: 32%">Перевес: <span style="color: {procent_pereves_color};">{procent_pereves}%</span></div>
-<div class="dsh_card_item" style="top: 38%">Перевес, шт: <span style="color: {procent_pereves_color};">{count_packages_v2_pereves}</span></div>
+<div class="dsh_card_item" style="top: 38%">Перевес, шт: <span style="color: {procent_pereves_color};">{count_packages_v4_pereves}</span></div>
 <div class="dsh_card_item" style="top: 44%">Перевес, кг: <span style="color: {procent_pereves_color};">{weight_pereves}</span></div>
-<div class="dsh_card_item" style="top: 50%">Штук: <span>{count_packages_v2}</span></div>
+<div class="dsh_card_item" style="top: 50%">Штук: <span>{count_packages_v4}</span></div>
 <div class="dsh_card_item" style="top: 56%">Коробок: <span>{total_fact}</span></div>
 <div class="dsh_card_item" style="top: 62%">План: <span style="color: {procent_plan_color}">{procent_plan}%</span></div>
 <div class="dsh_card_item" style="top: 68%">Норматив: <span>{normativ}</span> шт</div>
@@ -145,7 +145,7 @@ function render(data){
             var cur_cnt = 0;
             for(j in prods_list){
                 if(prods_list[j]["status"]!="Брак"){
-                    cur_cnt += prods_list[j]["pack_qtt_v2"];
+                    cur_cnt += prods_list[j]["pack_qtt_v4"];
                 }
             }
             if (cur_cnt>max_cnt){

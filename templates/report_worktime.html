@@ -15,17 +15,24 @@
 {% block content %}
 
 <div class="container-fluid" style="height: 100%;background-color:lightgray">
-    <nav class="col-12 navbar bar">
-        <div class="navbar-toggler" id="head">Время работы цехов</div>
-    </nav>
+    <header class="header">
+        <div class="header-wrap">
+            <div class="header-item">
+                <nav class="navigation">
+                    <a href="/dashboard/" class="btn btn-prev"><span class="icon-arrow"></span></a>
+                </nav>
+                <div class="title-header">Время работы комплексов</div>
+            </div>
+        </div>
+    </header>
     <br>
 
     <div class="row" style="vertical-align: middle;">        
         <div class="input-group m-3 col-2" >
             <select id="fs" class="form-select" aria-label="Default select example">
-                <option value="weigh1">Цех упаковка</option>
-                <option value="weigh2">Цех ломтики</option>
-                <option value="weigh3">Цех упаковка - 2</option>
+                <option value="weigh1">Упаковка</option>
+                <option value="weigh2">Ломтики</option>
+                <option value="weigh3">Упаковка - 2</option>
             </select>
         </div>
         <div class="input-group m-3 col-2" >
@@ -49,9 +56,10 @@
     <br>
     
     <div class="row">
-        <div id="count" class="worktime-totalvalues col-4"></div>
-        <div id="worktime" class="worktime-totalvalues col-4"></div>
-        <div id="performanse" class="worktime-totalvalues col-4"></div>
+        <div id="count" class="worktime-totalvalues col-3"></div>
+        <div id="worktime" class="worktime-totalvalues col-3"></div>
+        <div id="performanse" class="worktime-totalvalues col-3"></div>
+        <div id="percent_cnt_brak" class="worktime-totalvalues col-3"></div>
     </div>
 
     <table class="table table-striped" id="table"></table>
