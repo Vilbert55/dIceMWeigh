@@ -74,7 +74,7 @@ function drow_graf(container_id, title, data_graf, normativ, max_val) {
 function render(data){
     console.log(data);
     for(fs in data){
-        if(fs=="weigh3_backup"||fs=="weigh1_backup"){
+        if(fs=="weigh3_backup"||fs=="weigh1_backup"||fs=="weigh2_backup"||fs=="weigh4_backup"){
             continue
         }
         $("#status_" + fs).show();
@@ -127,7 +127,7 @@ function render(data){
             var graf_title = "Цех ломтики. Штук - Время"
             data[fs]["fs_name"] = "Цех ломтики";
             data[fs]["normativ"] = 2000;
-        }else if(fs=="weigh3"){
+        }else if(fs=="weigh5"){
             var graf_title = "Цех шокфрост. Штук - Время"
             data[fs]["fs_name"] = "Цех шокфрост";
             data[fs]["normativ"] = 2000;
@@ -182,13 +182,14 @@ function main(){
 function set_default_cards(){
     flush_card("weigh1");
     flush_card("weigh2");
+    flush_card("weigh5");
     main();
 }
 function flush_card(fs){
     var names = {
         "weigh1": "Цех упаковка",
         "weigh2": "Цех ломтики",
-        "weigh3": "Цех шокфрост"
+        "weigh5": "Цех шокфрост"
     }
     var fscard_html = render_template(TEMPLATE_CARD_DEFAULT,{fs:fs,fs_name: names[fs]},[]);
     $("#card_"+fs).html(fscard_html);

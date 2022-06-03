@@ -198,7 +198,7 @@ class DB:
 
     async def dashboard_get_values(self, dt):
         Debug.info("begin get values for dashboard")
-        data = {"weigh1":{},"weigh2":{},"weigh3":{}}
+        data = {"weigh1":{},"weigh2":{},"weigh3":{},"weigh4":{},"weigh5":{}}
         for fs in data:
             code, json = 500, {}
             if not dt:
@@ -234,53 +234,56 @@ class DB:
         return result
 
     async def merge_dashboard_values(self, data):
-        # объединяем данные weigh1 и weigh3
-        data["weigh1_backup"] = data["weigh1"]
-        data["weigh3_backup"] = data["weigh3"]
+        # объединяем данные 
+        merge_fs = [["weigh1","weigh3"],["weigh2","weigh4"]]
+        for m in merge_fs:
+            m1, m2 = m[0], m[1]
+            data["%s_backup" % m1] = data[m1]
+            data["%s_backup" % m2] = data[m2]
 
-        if data["weigh3"]["status"] != "no_data" and data["weigh1"]["status"] != "no_data":
-            summ_fields = ["count", "weight", "count_h", "weight_brak", "total_fact", "count_pereves",
-                "count_packages", "count_packages_v2", "count_packages_v3_h", "count_packages_v3", "count_packages_v4",
-                "count_packages_v2_brak", "count_packages_v3_brak", "count_packages_v4_brak",
-                "count_packages_v2_pereves", "count_packages_v3_pereves", "count_packages_v4_pereves",
-                "weight_pereves", "count_packages_v2_norma", "count_packages_v3_norma", "count_packages_v4_norma",
-                "weight_norma", "allprods"]
+            if data[m2]["status"] != "no_data" and data[m1]["status"] != "no_data":
+                summ_fields = ["count", "weight", "count_h", "weight_brak", "total_fact", "count_pereves",
+                    "count_packages", "count_packages_v2", "count_packages_v3_h", "count_packages_v3", "count_packages_v4",
+                    "count_packages_v2_brak", "count_packages_v3_brak", "count_packages_v4_brak",
+                    "count_packages_v2_pereves", "count_packages_v3_pereves", "count_packages_v4_pereves",
+                    "weight_pereves", "count_packages_v2_norma", "count_packages_v3_norma", "count_packages_v4_norma",
+                    "weight_norma", "allprods"]
 
-            for k in summ_fields:
-                if not data["weigh1"].get(k):
-                    data["weigh1"][k] = 0
-                if data["weigh3"].get(k):
-                    data["weigh1"][k] += data["weigh3"][k]
-                if k != "allprods":
-                    data["weigh1"][k] = round(data["weigh1"][k], 2)
-            for h2 in data["weigh3"]["prods_by_hours"]:
-                for h in data["weigh1"]["prods_by_hours"]:
-                    if h["hour"] == h2["hour"]:
-                        h["prods_list"] += h2["prods_list"]
-            for g2 in data["weigh3"]["goods"]:
-                if g2 in data["weigh1"]["goods"]:
-                    data["weigh1"]["goods"][g2]["fact"] += data["weigh3"]["goods"][g2]["fact"]
-                    data["weigh1"]["goods"][g2]["fact_v4"] += data["weigh3"]["goods"][g2]["fact_v4"]
-                else:
-                    data["weigh1"]["goods"][g2] = data["weigh3"]["goods"][g2]
+                for k in summ_fields:
+                    if not data[m1].get(k):
+                        data[m1][k] = 0
+                    if data[m2].get(k):
+                        data[m1][k] += data[m2][k]
+                    if k != "allprods":
+                        data[m1][k] = round(data[m1][k], 2)
+                for h2 in data[m2]["prods_by_hours"]:
+                    for h in data[m1]["prods_by_hours"]:
+                        if h["hour"] == h2["hour"]:
+                            h["prods_list"] += h2["prods_list"]
+                for g2 in data[m2]["goods"]:
+                    if g2 in data[m1]["goods"]:
+                        data[m1]["goods"][g2]["fact"] += data[m2]["goods"][g2]["fact"]
+                        data[m1]["goods"][g2]["fact_v4"] += data[m2]["goods"][g2]["fact_v4"]
+                    else:
+                        data[m1]["goods"][g2] = data[m2]["goods"][g2]
 
-            data["weigh1"]["procent_brak"] = percentage(data["weigh1"]["count_packages_v4_brak"],\
-                data["weigh1"]["count_packages_v4_brak"] + data["weigh1"]["count_packages_v4"])
-            data["weigh1"]["procent_pereves"] = percentage(data["weigh1"]["count_packages_v4_pereves"],\
-                data["weigh1"]["count_packages_v4_pereves"] + data["weigh1"]["count_packages_v4"])
-            data["weigh1"]["procent_plan"] = percentage(data["weigh1"]["total_fact"], data["weigh1"]["total_plan"])
-            if "no_data" in (data["weigh1"]["status"], data["weigh3"]["status"]):
-                data["weigh1"]["status"] = "no_data"
-            elif "data_backup" in (data["weigh1"]["status"], data["weigh3"]["status"]):
-                data["weigh1"]["status"] = "data_backup"
-            if "stop" in (data["weigh1"]["work_status"], data["weigh3"]["work_status"]):
-                data["weigh1"]["work_status"] = "stop"
-            data["weigh1"]["dttm_data"] = min(data["weigh3"]["dttm_data"], data["weigh1"]["dttm_data"])
-        elif data["weigh3"]["status"] != "no_data" and data["weigh1"]["status"] == "no_data":
-            data["weigh3"]["status"] = "no_data"
-            data["weigh1"] = data["weigh3"]
-                    
-        del data["weigh3"]
+                data[m1]["procent_brak"] = percentage(data[m1]["count_packages_v4_brak"],\
+                    data[m1]["count_packages_v4_brak"] + data[m1]["count_packages_v4"])
+                data[m1]["procent_pereves"] = percentage(data[m1]["count_packages_v4_pereves"],\
+                    data[m1]["count_packages_v4_pereves"] + data[m1]["count_packages_v4"])
+                data[m1]["procent_plan"] = percentage(data[m1]["total_fact"], data[m1]["total_plan"])
+                if "no_data" in (data[m1]["status"], data[m2]["status"]):
+                    data[m1]["status"] = "no_data"
+                elif "data_backup" in (data[m1]["status"], data[m2]["status"]):
+                    data[m1]["status"] = "data_backup"
+                if "stop" in (data[m1]["work_status"], data[m2]["work_status"]):
+                    data[m1]["work_status"] = "stop"
+                data[m1]["dttm_data"] = min(data[m2]["dttm_data"], data[m1]["dttm_data"])
+            elif data[m2]["status"] != "no_data" and data[m1]["status"] == "no_data":
+                data[m2]["status"] = "no_data"
+                data[m1] = data[m2]
+                        
+            del data[m2]
         return data
 
     async def worktime_get_values(self, jdata):

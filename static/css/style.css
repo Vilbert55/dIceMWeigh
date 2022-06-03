@@ -120,7 +120,7 @@ html, body {
 .graf_container {
   margin: 1% 1%;
   background-color: white;
-  height: 48%;
+  height: 32%;
 }
 .graf_col{
   width: 5%;
@@ -145,7 +145,7 @@ html, body {
 }
 .dsh_card_item_big {
   position: relative;
-  justify-self: center;
+  justify-self: left;
   grid-area: a;
   margin: 0.5%;
   /* height: 20%;
@@ -155,7 +155,7 @@ html, body {
 }
 .dsh_card_item_status {
   position: relative;
-  justify-self: center;
+  justify-self: right;
   grid-area: a;
   margin: 0.5%;
   height: 10%;
