@@ -67,3 +67,17 @@ async def prods(request):
 async def prods_list(request):
     return tresponse(request,"plan.html",{})
 
+@routes.get('/login/')
+@log
+async def v_login(request):
+    response = tresponse(request,"login.html",{})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    return response
+
+@routes.post('/login/')
+@log
+async def v_login_post(request):
+    return jresponse({},200)
+

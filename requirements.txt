@@ -28,3 +28,4 @@ uuid==1.30
 wcwidth==0.2.5
 yarl==1.6.3
 requests
+aiohttp_session[secure]

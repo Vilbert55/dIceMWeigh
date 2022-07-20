@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block initjs %}
+    function onLOAD(){}
+    function LOGIN(){
+        $.ajax
+        ({
+          type: "POST",
+          url: "/login/",
+          headers: {
+            "Authorization": "Basic " + btoa($("#login").val()+ ":" + $("#password").val())
+          },
+          success: function (){
+            window.location.assign('/dashboard/');
+          },
+          error: function (){
+                alert("Неверный пароль");
+                $("#password").val("");
+            }
+        }); 
+    }
+
+{% endblock %}
+{% block content %}
+{{ super() }}
+<style>
+    div {
+      margin: 3px;
+    }
+  
+    label {
+      display: inline-block;;
+      width: 100px;
+    }
+  </style>
+  <form onsubmit="LOGIN();return false;" style="text-align: center; margin-top: 50px;">
+    <div>
+      <label>Login:</label>
+      <input type='text' autocomplete='username' id='login'/>
+    </div>
+    <div>
+      <label>Password:</label>
+      <input type='password' id='password'/>
+    </div>
+    <input type="submit" value="Login">
+  </form>
+
+{% endblock %}
+
+

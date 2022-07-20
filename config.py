@@ -12,6 +12,7 @@ DEFAULT_PORT = 20041
 API_VERSION_DEFAULT = '1'
 API_VERSION_1 = '1'
 
+
 def _roundup(val,deep):
     real = "0"*deep
     return float( Decimal("%.4f" % val).quantize(Decimal("1."+real),rounding=ROUND_HALF_UP) )
@@ -28,6 +29,12 @@ def jresponse(data, code=200):
 
 def jmresponse(data, code=200):
     return web.Response(text=json_util.dumps(data))
+
+def redirect_login():
+    return web.HTTPFound('/login/')
+
+def forbidden():
+    return web.json_response({},status=403)
 
 def upresult(result):
     res = {}
